@@ -11,11 +11,15 @@
                                     <v-subheader class="pa-0">Name to search?</v-subheader>
                                     <v-autocomplete
                                     v-if="userCards.length > 0"
-                                    :hint="'Enter a name above'"
-                                    :items="userCards"
-                                    :readonly="false"
-                                    :label="`Name`"
-                                    prepend-icon="mdi-city"
+                                    :items = "userCards"
+                                    :loading="isLoading"
+                                    hide-no-data
+                                    autofocus
+                                    :search-input.sync="search"
+                                    :item-text = "userIndexes"
+                                    placeholder="Start typing to Search"
+                                    prepend-icon="mdi-database-search"
+                                    return-object
                                     >
                                     <template v-slot:append-outer>
                                         <v-slide-x-reverse-transition
@@ -28,7 +32,7 @@
                             </v-card>
                         </v-flex>
                                 <user-item v-for="(user, index) in info" :position="index" :key="index" :id="index" :name="user.name" :email="user.email" :picture="user.picture"
-                                @click.native="showCard(index)" v-model="userCards">
+                                @click.native="showCard(index)">
                                 </user-item>
                     </v-layout>
                 </v-flex>
@@ -44,47 +48,53 @@
     import axios from 'axios';
     import UserItem from '../components/UserItem';
     import UserCard from '../components/UserCard';
+    import regeneratorRuntime from 'regenerator-runtime'
     export default {
     name: 'App',
     components: {UserItem, UserCard},
     data () {
             return {
+                userCards: [],
+                userIndexes: [],
                 info: null,
-                userCards: []
+                search : null,
+                cont : 0,
+                isLoading : false,
                 }
         },
-    mounted () {
-        axios
-            .get('https://randomuser.me/api/?results=13')
-            .then(response => (this.info = response.data.results/*, console.log(this.info)*/))
-            
-    },
     methods: {
         showCard: function(number){
             this.$refs.maincard.index = number;
-        }
+            this.isLoading = false;
+        },
     },
     computed:{
-        processData: function(){
+        formatData: async function() {
+            let arrCards = [];
+            let arrIndex = [];
+            let cont = 0 ;
+            const user = await axios.get('https://randomuser.me/api/?results=13')
+            this.info=user.data.results;
             this.info.forEach(function(element, index) {
-                this.userCards.push(formatAutocomplete(element.name))
-                // console.log(this.userCards);
+                arrCards.push(element.name.first.charAt(0).toUpperCase() + element.name.first.slice(1) + " " + element.name.last.charAt(0).toUpperCase() + element.name.last.slice(1));
+                arrIndex.push(cont);
+                cont++;
             });
+            this.userCards = arrCards;
+            this.userIndexes = arrIndex;
         },
-        formatAutocomplete: function(name){
-            return this.capitalizeFirst(name.first) +" "+ this.capitalizeFirst(name.last);
+    },
+    watch: {
+        search (val) {
+            this.isLoading = true; 
+            this.showCard(this.userCards.indexOf(val));
         },
-        capitalizeFirst: function(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
+    },
+    mounted () {
+        this.formatData;
+    },
 }
 </script>
 
 <style scoped>
-  /* .container {
-    width: 800px;
-    margin: 50px auto;
-    text-align: center;
-  } */
 </style>
