@@ -19,9 +19,7 @@
     "vue-hot-reload-api": "^2.3.3",
     "vuetify": "^1.5.16",
     "regenerator-runtime": "^0.13.2",
-    "vue-template-compiler": "^2.6.10"
-  },
-  "devDependencies": {
+    "vue-template-compiler": "^2.6.10",
     "@vue/component-compiler-utils": "^3.0.0"
   }
 }
