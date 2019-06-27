@@ -18,10 +18,10 @@
     "vue-axios": "^2.1.4",
     "vue-hot-reload-api": "^2.3.3",
     "vuetify": "^1.5.16",
-    "regenerator-runtime": "^0.13.2"
+    "regenerator-runtime": "^0.13.2",
+    "vue-template-compiler": "^2.6.10"
   },
   "devDependencies": {
-    "@vue/component-compiler-utils": "^3.0.0",
-    "vue-template-compiler": "^2.6.10"
+    "@vue/component-compiler-utils": "^3.0.0"
   }
 }
